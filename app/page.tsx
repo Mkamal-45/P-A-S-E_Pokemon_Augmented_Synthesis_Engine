@@ -2,27 +2,43 @@
 
 import React, {useState} from "react";
 
+interface Pokemon{
+  name: string;
+  sprite: string;
+  types: string[];
+  id: number;
+}
+
 export default function Home(){
   const [query, setQuery]= useState("");
+  const [pokemon, setPokemon]= useState<Pokemon | null>(null);
   const handleSearch= async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("1. Starting API call for:", query);
+    console.log("Starting API call for:", query);
+
     try{
       const response= await fetch(
         `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
       );
-      console.log("2. Response received:",  response);
-      console.log("3. Response ok?", response.ok);
+      console.log("Response receive:", response.ok?);
+      if (!response.ok){
+        throw new Error("PKMN not found");
+      }
       const data= await response.json();
-      console.log("4. Data received:", data);
-      console.log("5. Pokemon name:", data.name);
-      console.log("6. Pokemon sprite:", data.sprites.front_default);
-      console.log("7. Pokemon types:", data.types.map((t:any)=> t.type.name));
-      console.log("8. Pokemon ID:", data.id);
+      console.log("Data received:", data);
+      const pokemonData: Pokemon= {
+        name: data.name,
+        sprite: data.sprites.front_default,
+        types: data.types.map((t:any)=> t.type.name),
+        id: data.id,
+      };
+      console.log("PKMN data extracted:", pokemonData);
+      setPokemon(pokemonData);
       alert(`Found ${data.name}! Check console for all the details.`);
     } catch(error){
       console.log("Error:", error);
       alert("Pokemon not found! No fakemon aloud.");
+      setPokemon(null);
     }
 
   };
