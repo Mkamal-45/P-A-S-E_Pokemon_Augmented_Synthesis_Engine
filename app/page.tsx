@@ -11,7 +11,8 @@ interface Pokemon{
 
 export default function Home(){
   const [query, setQuery]= useState("");
-  const [pokemon, setPokemon]= useState<Pokemon | null>(null);
+  const [currentPokemon, setCurrentPokemon]= useState<Pokemon | null>(null);
+  const [team ,setTeam]= useState<Pokemon[]>([]);
   const handleSearch= async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Starting API call for:", query);
@@ -32,59 +33,125 @@ export default function Home(){
         types: data.types.map((t: any)=> t.type.name),
         id: data.id,
       };
-      console.log("PKMN data extracted:", pokemonData);
-      setPokemon(pokemonData);
-      alert(`Found ${data.name}! Check console for all the details.`);
+      console.log("PKMN found:", pokemonData.name);
+      setCurrentPokemon(pokemonData);
     } catch(error){
       console.log("Error:", error);
       alert("Pokemon not found! No fakemon aloud.");
-      setPokemon(null);
+      setCurrentPokemon(null);
     }
 
   };
+  const addToTeam=()=>{
+    if(!currentPokemon){
+      alert("Please choose a Pokemon first!");
+      return;
+    }
+    if(team.length >=6){
+      alert("Your party is full! You can only have 6 PKMN in your party");
+      return;
+    }
+    const isDuplicate= team.some(p=> p.id=== currentPokemon.id);
+    if (isDuplicate){
+      alert(`${currentPokemon.name} is already in your team!`);
+      return;
+    }
+    setTeam([...team, currentPokemon]);
+    console.log("Added to your party:", currentPokemon.name);
+    console.log("Current team:", team.length +1);
+    setCurrentPokemon(null);
+    setQuery("");
+  };
+
+  const removeFromTeam=(index: number)=>{
+    const newTeam= team.filter((_, i)=> i !==index);
+    console.log("Removed POkemon at:", index);
+    console.log("New Team:", newTeam.length);
+    setTeam(newTeam);
+  }
 
   return(
-  <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-black text-white">
-    <h1 className="text-5xl font-extrabold tracking-tighter mb-4 italic">
-      POKEMON<span className="text-blue-500"></span>
-    </h1>
-    <p className="text-gray-400 mb-10 uppercase tracking-widest text-sm">
-      Artificial Intelligence x Fantasy Fashion
-    </p>
-    <form onSubmit={handleSearch} className="w-full max-w-md flex gap-2">
-      <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter Pokemon Name:  "
-            className="flex-1 p-4 bg-transparent border-b-2 border-gray-700 focus:border-blue-500 outline-none text-xl transition-all"/>
-
-      <button type="submit" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 font-bold uppercase">
-        Analyze
-      </button>
-    </form>
-    {pokemon &&(
-      <div className="border-2 border-blue-500 rounded-lg p-8 bg-gray-900 max-w-md w-full">
-        <div className="flex flex-col items-center">
-          <img src={pokemon.sprite} alt={pokemon.name} className="w-48 h-48"/>
-          <h2 className="text-3xl font-bold capitalize mt-4">
-            {pokemon.name}
-          </h2>
-          <p className="text-gray-400 text-lg">
-            #{pokemon.id.toString().padStart(3, '0')}
-          </p>
-          <div className="flex gap-2 mt-4">
-            {pokemon.types.map((type, index)=>(
-              <span key={index} className="px-4 py-2 bg-blue-600 rounded-full capitalize font-semibold">
-                {type}
-              </span>
-            ))}
+  <main className="min-h-screen bg-black text-white p-8">
+    <div className="max-w-6xl mx-auto">
+      <h1 className="text-6xl font-extrabold italic text-center mb-2">
+        POKEMON <span className="text-blue-500">STYLIST</span>
+      </h1>
+      <p className="text-gray-400 text-center mb-12 uppercase tracking-widest text-sm">
+        Artificial Intelligence x Fantasy Fashion
+      </p>
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-4">
+          Search Pokemon ({team.length}/6 in team)
+        </h2>
+        <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+          <input
+            type="text"
+            value={query}
+            onChange={(e)=> setQuery(e.target.value)}
+            placeholder="Enter POkemon name..."
+            className="flex-1 p-4 bg-transparent border-b-2 border-gray-700 focus:border-blue-500 oytline-none text-xl"/>
+          <button type="submit" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 font-bold uppercase transition">
+            Search
+          </button>
+        </form>
+        {currentPokemon &&(
+          <div className="border border-gray-700 p-6 rounded-lg mb-6 bg-gray-900">
+            <div className="flex items-center gap-4">
+              <img src={currentPokemon.sprite} alt={currentPokemon.name} className="w-24 h-24"/>
+              <div>
+                <h3 className="text-2xl font-bold capitalize">
+                  {currentPokemon.name}
+                </h3>
+                <p className="text-gray-400">
+                  Types: {currentPokemon.types.join(", ")}
+                </p>
+              <p className="text-gray-400">
+                #{currentPokemon.id.toString().padStart(3, '0')}
+              </p>
+              </div>
+              <button onClick={addToTeam} disabled={team.length>=6}
+                className="ml-auto px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed font-bold rounded transition">
+                  {team.length >=6? "Team Full": "Add to Team"}
+              </button>
+            </div>
           </div>
+        )}
+      </div>
+
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-4">Your Team</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {team.map((pokemon, index)=>(
+            <div key={index} className="border border-gray-700 p-4 rounded-lg">
+              <button onClick={()=> removeFromTeam(index)}
+                className="absolute top-2 right-2 bg-red hover:bg-red-700">
+                  x
+              </button>
+              <img src={pokemon.sprite} alt={pokemon.name} className="w-full"/>
+              <p className="text-center capitalize mt-2 text-sm">
+                {pokemon.name}
+              </p>
+              <p className="text-center text-xs text-gray-400">
+                {pokemon.types.join("/")}
+              </p>
+            </div>
+          ))}
+          {Array(6- team.length).fill(null).map((_, index)=>(
+            <div key={`empty-${index}`}
+                className="border-2 border-dasheed border-gray-700 flex items-center justify-center">
+                  <p className="text-gray-600 text-sm">Empty Slot</p>
+                </div>
+          ))}
         </div>
       </div>
-    )}
-    <div className="mt-8 text center text-gray-400">
+
+
+    <div className="text-center text-gray-400 text-sm">
       <p className="font-bold text-white mb-2">Testing</p>
-      <p>Page Inspect</p>
-      <p>Test with valid and fakemons</p>
-      <p></p>
+      {/* <p>Search and add!!</p> */}
+      {/* <p>Mess around with the logic 6-7</p> */}
+      {/* <p>add same pkmn to party,expect alert !!!</p> */}
+      </div>
     </div>
   </main>
 
