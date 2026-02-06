@@ -7,6 +7,7 @@ interface Pokemon{
   sprite: string;
   types: string[];
   id: number;
+  color: string;
 }
 
 export default function Home(){
@@ -29,13 +30,19 @@ export default function Home(){
       }
       const data= await response.json();
       console.log("Data received:", data);
+      console.log("Fetching color data from pkmn species");
+      const speciesResponse= await fetch(data.species.url);
+      const speciesData= await speciesResponse.json();
+      console.log("Color found:", speciesData.color.name);
       const pokemonData: Pokemon= {
         name: data.name,
         sprite: data.sprites.front_default,
         types: data.types.map((t: any)=> t.type.name),
         id: data.id,
+        color: speciesData.color.name,
       };
       console.log("PKMN found:", pokemonData.name);
+      console.log("PKMN color:", pokemonData.color);
       setCurrentPokemon(pokemonData);
     } catch(error){
       console.log("Error:", error);
