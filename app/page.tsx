@@ -45,33 +45,6 @@ export default function Home(){
 
   };
 
-  const addStoreLink=()=>{
-    if (!storeLinkInput){
-      alert("Please enter a link to your favorite store!");
-      return;
-    }
-    if(!storeLinkInput.startsWith('http://')&& !storeLinkInput.startsWith('https://')){
-      alert("Please enter a valid website url");
-      return;
-    }
-    if (storeLinks.length>=5){
-      alert("Currently we are limited to 5 stores!");
-      return;
-    }
-    if(storeLinks.includes(storeLinkInput)){
-      alert("You have already picked this store!");
-      return;
-    }
-
-    setStoreLinks([...storeLinks, storeLinkInput]);
-    console.log("Added store:", storeLinkInput);
-    console.log("Total Stores:", storeLinks.length +1);
-
-    setStoreLinkInput("");
-  };
-
-  
-
   const addToTeam=()=>{
     if(!currentPokemon){
       alert("Please choose a Pokemon first!");
@@ -97,7 +70,39 @@ export default function Home(){
     const newTeam= team.filter((_, i)=> i !==index);
     console.log("Removed POkemon at:", index);
     setTeam(newTeam);
-  }
+  };
+
+  const addStoreLink=()=>{
+    if (!storeLinkInput){
+      alert("Please enter a link to your favorite store!");
+      return;
+    }
+    if(!storeLinkInput.startsWith('http://')&& !storeLinkInput.startsWith('https://')){
+      alert("Please enter a valid website url");
+      return;
+    }
+    if (storeLinks.length>=5){
+      alert("Currently we are limited to 5 stores!");
+      return;
+    }
+    if(storeLinks.includes(storeLinkInput)){
+      alert("You have already picked this store!");
+      return;
+    }
+
+    setStoreLinks([...storeLinks, storeLinkInput]);
+    console.log("Added store:", storeLinkInput);
+    console.log("Total Stores:", storeLinks.length +1);
+
+    setStoreLinkInput("");
+  };
+  
+  const removeStoreLink= (index : number) =>{
+    const newStoreLinks= storeLinks.filter((_, i)=> i !==index);
+    console.log("Removing store at position:", index);
+    console.log("Remaining Stores:", newStoreLinks.length);
+    setStoreLinks(newStoreLinks);
+  };
 
   return(
   <main className="min-h-screen bg-black text-white p-8">
@@ -165,16 +170,6 @@ export default function Home(){
               </p>
             </div>
           ))}
-          {/* <button */}
-            {/* onClick={()=>{ */}
-              {/* console.log("Testing addStorelink function"); */}
-              {/* setStoreLinkInput(""); */}
-              {/* setTimeout(()=> addStoreLink(), 100); */}
-            {/* }} */}
-            {/* className="px-4 py-2 bg-yellow-600 text-black font-bold" */}
-            {/* > */}
-              {/* Test: add test store */}
-          {/* </button> */}
           {Array(6- team.length).fill(null).map((_, index)=>(
             <div key={`empty-${index}`}
                 className="border-2 border-dasheed border-gray-700 flex items-center justify-center">
@@ -183,13 +178,73 @@ export default function Home(){
           ))}
         </div>
       </div>
+      
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-4">
+          Your Favorite Stores ({storeLinks.length}/5)
+        </h2>
+        <div className="flex gap-2 mb-4">
+          <input 
+            type="url"
+            value={storeLinkInput}
+            onChange={(e)=> setStoreLinkInput(e.target.value)}
+            placeholder="Paste store url!"
+            className="flex p-4 bg-transparent border-b-2 border-gray-700 focus:border-blue-500 outline-none"/>
+          <button 
+            onClick={addStoreLink}
+            type="button"
+            disabled={storeLinks.length>=5}
+            className="px-6 py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed font-bold transition">
+            {storeLinks.length >=5 ? "Max Stores" : "Add Store"}
+            </button>
+        </div>
+        {storeLinks.length >0 && (
+          <div className="space-y-2">
+            {storeLinks.map((link, index)=>(
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-gray-900 p-3 rounded border border-gray-700">
+                <span className="text-2xl">Store</span>
+                <span className="flex-1 truncate text-gray-300">{link}</span>
+                <button
+                  onClick={()=> removeStoreLink(index)}
+                  className="text-red-500 hover:text-red-400 px-3 py-1 hover:bg-red-900/20 rounded transition">
+                  Remove
+                </button>
+              </div>
+            ))}
+        </div>
+        )}
 
+        {storeLinks.length===0 &&(
+          <div className="text-center text-gray-500 py-8 border-2 border-dashed border-gray-800 rounded-lg">
+            <p className="text-lg mb-2">No stores added yet</p>
+            <p className="text-sm">Add your favorite shopping websites to get personalized outfit recommendations</p>
+          </div>
+        )}
+      </div>
+
+      
 
     <div className="text-center text-gray-400 text-sm">
       <p className="font-bold text-white mb-2">Testing</p>
-      {/* <p>Search and add!!</p> */}
-      {/* <p>Mess around with the logic 6-7</p> */}
-      {/* <p>add same pkmn to party,expect alert !!!</p> */}
+      <button onClick={()=>{
+        console.log("Test addStoreLink");
+        console.log("Stores Before:", storeLinks.length);
+        const testUrl= "https://shinzobrand.net/" + Date.now()+ ".com";
+        if (storeLinks.length < 5 && !storeLinks.includes(testUrl)) {
+          setStoreLinks([...storeLinks, testUrl]);
+          console.log("Store added:", testUrl);
+          console.log("Stores after:", storeLinks.length +1);
+        }else{
+          console.log("Cant add store");
+        }
+      }}
+      className="w-full px-2 py-1 bg-black text-yellow-400 rounded hover:bg-gray-800"
+      >
+        Test: addStoreLink
+      </button>
+      
       </div>
     </div>
   </main>
