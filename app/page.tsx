@@ -162,6 +162,49 @@ export default function Home(){
         )}
       </div>
 
+      {team.length>0 &&(
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">Team Color Palette</h2>
+          <div className="flex gap-2 mb-4">
+            {Array.from(new Set(team.map (p=>p.color))).map((color,index)=>(
+              <div key={index} className="text-center">
+                <div
+                  className={`w-20 h-20 rounded-lg border-2 border-gray-600 flex items-center justify-center capitalize font-bold text-sm
+                    ${color==='black'? 'bg-black text-white' : ''}
+                    ${color==='blue'? 'bg-blue-500 text-white' : ''}
+                    ${color==='brown'? 'bg-amber-700 text-white' : ''}
+                    ${color==='gray'? 'bg-gray-500 text-white' : ''}
+                    ${color==='green'? 'bg-green-500 text-white' : ''}
+                    ${color==='pink'? 'bg-pink-400 text-white' : ''}
+                    ${color==='purple'? 'bg-purple-500 text-white' : ''}
+                    ${color==='red'? 'bg-red text-white' : ''}
+                    ${color==='white'? 'bg-white text-black' : ''}
+                    ${color==='yellow'? 'bg-yellow-400 text-black' : ''}                    
+                  `}>
+                    {color}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {team.filter(p=>p.color===color).length} Pokemon
+                  </p>
+              </div>
+            ))}
+          </div>
+          <div className="text-sm text-gray-400">
+            <p className="mb-2 font-semibold text-white">Color breakdown:</p>
+            {Array.from(new Set(team.map(p=> p.color))).map((color,index)=>(
+              <p key={index} className="capitalize">
+                <span className="font-bold text-white">{color}:</span> {
+                  team 
+                    .filter(p=> p.color===color)
+                    .map(p=> p.name)
+                    .join(", ")
+                }
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Your Team</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
