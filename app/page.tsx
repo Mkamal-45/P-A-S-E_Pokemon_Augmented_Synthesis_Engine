@@ -181,7 +181,7 @@ export default function Home(){
       
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-4">
-          Your Favorite Stores ({storeLinks.length}/5)
+          Your Favorite Fashion Outlet ({storeLinks.length}/5)
         </h2>
         <div className="flex gap-2 mb-4">
           <input 
@@ -225,26 +225,8 @@ export default function Home(){
       </div>
 
       
-
     <div className="text-center text-gray-400 text-sm">
       <p className="font-bold text-white mb-2">Testing</p>
-      <button onClick={()=>{
-        console.log("Test addStoreLink");
-        console.log("Stores Before:", storeLinks.length);
-        const testUrl= "https://shinzobrand.net/" + Date.now()+ ".com";
-        if (storeLinks.length < 5 && !storeLinks.includes(testUrl)) {
-          setStoreLinks([...storeLinks, testUrl]);
-          console.log("Store added:", testUrl);
-          console.log("Stores after:", storeLinks.length +1);
-        }else{
-          console.log("Cant add store");
-        }
-      }}
-      className="w-full px-2 py-1 bg-black text-yellow-400 rounded hover:bg-gray-800"
-      >
-        Test: addStoreLink
-      </button>
-      
       </div>
     </div>
   </main>
