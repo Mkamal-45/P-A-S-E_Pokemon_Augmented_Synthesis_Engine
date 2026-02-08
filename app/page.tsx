@@ -110,6 +110,19 @@ export default function Home(){
     console.log("Remaining Stores:", newStoreLinks.length);
     setStoreLinks(newStoreLinks);
   };
+  const getTeamColors=() => {
+    const colors= team.map(p=> p.color);
+    const colorCount: {[key:string]: number}={};
+    colors.forEach(color=>{
+      colorCount[color]= (colorCount[color] || 0)+1;
+    });
+    const sortedColors= Object.entries(colorCount)
+      .sort((a,b)=> b[1]-a[1])
+      .map(([color])=> color);
+    console.log("Team color palette:", sortedColors);
+    console.log("Color Frquencies:", colorCount);
+    return sortedColors;
+  };
 
   return(
   <main className="min-h-screen bg-black text-white p-8">
@@ -280,6 +293,20 @@ export default function Home(){
       
     <div className="text-center text-gray-400 text-sm">
       <p className="font-bold text-white mb-2">Testing</p>
+      <button 
+        type="button"
+        onClick={()=>{
+          console.log("Testing color extraction");
+          console.log("Team:", team.map(p=> `${p.name} (${p.color})`));
+          const colors=getTeamColors();
+          console.log("Dominant colors sorted:", colors);
+          alert(`Team colors: ${colors.join(", ")}`);
+        }}
+        className="w-full px-2 py-1 bg-black text-yellow-400 rounded hover:bg-gray-800 mt-2"
+        >
+          Test: Team color extraction
+      </button>
+
       </div>
     </div>
   </main>
