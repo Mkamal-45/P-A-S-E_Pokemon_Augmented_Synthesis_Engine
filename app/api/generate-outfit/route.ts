@@ -6,7 +6,7 @@ const anthropic= new Anthropic({
     apiKey: process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || '', 
 });
 
-export async funtion POST(request: NextRequest){
+export async function POST(request: NextRequest){
     try{
         const {team, storeLinks}= await request.json();
         console.log("Request received");
