@@ -16,6 +16,8 @@ export default function Home(){
   const [team ,setTeam]= useState<Pokemon[]>([]);
   const [storeLinkInput, setStoreLinkInput]= useState("");
   const[storeLinks, setStoreLinks]=useState<string[]>([]);
+  const [outfitRecommendation, setOutfitRecommendation]= useState("");
+  const [generatingOutfit, setGeneratingOutfit]= useState(false);
   const handleSearch= async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Starting API call for:", query);
@@ -296,7 +298,17 @@ export default function Home(){
       <button 
         type="button"
         onClick={()=>{
-          console.log("Testing color extraction");
+          console.log("Testing outfitState variables");
+          console.log("outfitRecommendation:", outfitRecommendation);
+          console.log("generatingOutfit:", generatingOutfit);
+          setGeneratingOutfit(true);
+          console.log("Set to true");
+          setTimeout(()=>{
+            setOutfitRecommendation("Test outfit: ");
+            console.log("Set test outfit recommendation");
+            setGeneratingOutfit(false);
+            console.log("Set generatingOutfit to false");
+          }, 2000);
           console.log("Team:", team.map(p=> `${p.name} (${p.color})`));
           const colors=getTeamColors();
           console.log("Dominant colors sorted:", colors);
@@ -304,8 +316,13 @@ export default function Home(){
         }}
         className="w-full px-2 py-1 bg-black text-yellow-400 rounded hover:bg-gray-800 mt-2"
         >
-          Test: Team color extraction
+          Test: Outfit State Variables
       </button>
+
+      <div className="mt-2 text-xs text-gray-500">
+        <p>Loading: {generatingOutfit ? "Yes": "No"}</p>
+        <p>Outfit:  {outfitRecommendation || "(none)"}</p>
+      </div>
 
       </div>
     </div>
